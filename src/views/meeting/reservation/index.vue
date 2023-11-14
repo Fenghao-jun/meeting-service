@@ -1,7 +1,16 @@
 <template>
   <div v-loading="loading" class="reservation">
-    <reservationHeader :form="form" :device-list="deviceList" @change="headerChange" />
-    <div v-infinite-scroll="load" :infinite-scroll-distance="50" :infinite-scroll-immediate="false" class="reservation-content">
+    <reservationHeader
+      :form="form"
+      :device-list="deviceList"
+      @change="headerChange"
+    />
+    <div
+      v-infinite-scroll="load"
+      :infinite-scroll-distance="50"
+      :infinite-scroll-immediate="false"
+      class="reservation-content"
+    >
       <div class="content-title">
         <div class="title-l">会议室信息</div>
         <div class="title-r">
@@ -15,10 +24,7 @@
       <div v-for="(item, i) in domList" :key="i" class="meeting-item">
         <div class="meeting-info">
           <div class="info-t">
-            <img
-              :src="item.coverPicture"
-              alt=""
-            >
+            <img :src="item.coverPicture" alt="">
             <div class="deeting-details">
               <div class="details-t">
                 <div>
@@ -27,7 +33,7 @@
                 </div>
                 <div>
                   <img src="@/assets/meeting/people.png" alt="">
-                  {{ item.capacity || '' }}
+                  {{ item.capacity || "" }}
                 </div>
               </div>
               <!--              <div class="details-b">-->
@@ -93,6 +99,7 @@
                     }"
                     @click="timeClick(time, item)"
                   />
+
                 </template>
               </div>
             </div>
@@ -117,11 +124,16 @@
         :model="repeatForm"
         label-position="left"
         label-width="120px"
-        style="width: 95%; margin-left:10px;"
+        style="width: 95%; margin-left: 10px"
       >
         <el-form-item label="重复预约类型" prop="type">
           <el-select v-model="repeatForm.type" placeholder="请选择重复预约类型">
-            <el-option v-for="item in repeatTypeOptions" :key="item.value" :label="item.name" :value="item.value" />
+            <el-option
+              v-for="item in repeatTypeOptions"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="重复截止时间" prop="repetitionEndDate">
@@ -152,7 +164,7 @@
         :model="toNextForm"
         label-position="left"
         label-width="90px"
-        style="width: 95%; margin-left:10px;"
+        style="width: 95%; margin-left: 10px"
       >
         <el-form-item label="开始时间:" prop="startDate">
           <el-date-picker
@@ -169,7 +181,7 @@
             placeholder="开始时间"
             :picker-options="{ start: '00:00', step: '00:15', end: '23:45' }"
             clearable
-            style="margin-left:10px ;width: 130px"
+            style="margin-left: 10px; width: 130px"
           />
         </el-form-item>
         <el-form-item label="结束时间:" prop="endDate">
@@ -187,7 +199,7 @@
             placeholder="结束时间"
             :picker-options="{ start: '00:00', step: '00:15', end: '23:45' }"
             clearable
-            style="margin-left:10px ;width: 130px"
+            style="margin-left: 10px; width: 130px"
           />
         </el-form-item>
         <span style="float: right">最长跨日时间段为180天</span>
@@ -202,7 +214,12 @@
 
 <script>
 import reservationHeader from './component/reservationHeader.vue'
-import { queryConferenceMeetings, scheduled, repetitionScheduled, manageMeetingServicesList } from '@/api/reservation'
+import {
+  queryConferenceMeetings,
+  scheduled,
+  repetitionScheduled,
+  manageMeetingServicesList
+} from '@/api/reservation'
 
 export default {
   name: '',
@@ -227,9 +244,9 @@ export default {
     return {
       domList: [],
       apis: {
-        'common': scheduled,
-        'repeat': repetitionScheduled,
-        'toNext': scheduled
+        common: scheduled,
+        repeat: repetitionScheduled,
+        toNext: scheduled
       },
       loading: false,
       tips: [
@@ -284,13 +301,22 @@ export default {
       endDatePickerOptions: {
         disabledDate: (date) => {
           const endDate = this.$moment().add(180, 'day').format('YYYY-MM-DD')
-          const startDate = this.$moment().subtract(1, 'day').format('YYYY-MM-DD')
-          return date.getTime() > new Date(endDate).getTime() || date.getTime() <= new Date(startDate).getTime()
+          const startDate = this.$moment()
+            .subtract(1, 'day')
+            .format('YYYY-MM-DD')
+          return (
+            date.getTime() > new Date(endDate).getTime() ||
+            date.getTime() <= new Date(startDate).getTime()
+          )
         }
       },
       repeatFormRules: {
-        type: [{ required: true, message: '重复类型不能为空', trigger: 'change' }],
-        repetitionEndDate: [{ required: true, message: '请选择截止日期', trigger: 'change' }]
+        type: [
+          { required: true, message: '重复类型不能为空', trigger: 'change' }
+        ],
+        repetitionEndDate: [
+          { required: true, message: '请选择截止日期', trigger: 'change' }
+        ]
       },
       toNextFormRules: {
         startDate: [{ validator: validateStartTime, trigger: 'change' }],
@@ -304,10 +330,16 @@ export default {
   },
   methods: {
     load() {
-      if (this.meetingList.length === this.domList.length || this.meetingList.length < this.domList.length) {
+      if (
+        this.meetingList.length === this.domList.length ||
+        this.meetingList.length < this.domList.length
+      ) {
         return
       }
-      const arr = this.meetingList.slice(this.domList.length, this.domList.length + 5)
+      const arr = this.meetingList.slice(
+        this.domList.length,
+        this.domList.length + 5
+      )
       console.log(arr)
       this.domList = [...this.domList, ...arr]
     },
@@ -324,10 +356,11 @@ export default {
       this.allDate = []
       for (let i = 0; i < 24; i++) {
         for (let j = 0; j < 4; j++) {
+          // TODO Safari时间处理会导致ISO问题
           this.allDate.push({
             color: '',
             hour: i < 10 ? `0${i}:00` : `${i}:00`,
-            time: this.$moment(`${this.form.date} ${i}:${j * 15}`).format(
+            time: this.$moment(`${this.form.date} ${i < 10 ? `0${i}` : i}:${j === 0 ? '00' : j * 15}`).local().format(
               'YYYY-MM-DD HH:mm:ss'
             )
           })
@@ -447,9 +480,9 @@ export default {
       row.dates.forEach((item) => {
         if (
           this.$moment(item.time).valueOf() >
-          this.$moment(startTime).valueOf() &&
+            this.$moment(startTime).valueOf() &&
           this.$moment(item.time).valueOf() <
-          this.$moment(endTime).add(-15, 'm').valueOf() &&
+            this.$moment(endTime).add(-15, 'm').valueOf() &&
           item.notSelect
         ) {
           console.log()
@@ -490,7 +523,9 @@ export default {
       // 初始时间数组 否则点击无效
       this.loading = true
       const datas = { ...this.form }
-      datas.machineServiceIdList = datas.machineServiceIdList ? datas.machineServiceIdList.join(',') : ''
+      datas.machineServiceIdList = datas.machineServiceIdList
+        ? datas.machineServiceIdList.join(',')
+        : ''
       queryConferenceMeetings(datas)
         .then((res) => {
           // this.meetingList = res.data;
@@ -518,7 +553,12 @@ export default {
       const start = this.activeRow.startTime.split(' ')
       const end = this.activeRow.endTime.split(' ')
       console.log(start, end)
-      this.toNextForm = { startDate: start[0], endDate: end[0], startTime: start[1], endTime: end[1] }
+      this.toNextForm = {
+        startDate: start[0],
+        endDate: end[0],
+        startTime: start[1],
+        endTime: end[1]
+      }
       this.toNextVisible = true
     },
     // 跨天会议展示
@@ -543,16 +583,18 @@ export default {
       }
       let valid = true
       if (type === 'repeat') {
-        this.$refs.repeatForm.validate(validate => {
+        this.$refs.repeatForm.validate((validate) => {
           valid = validate
           if (valid) {
-            this.repeatForm.repetitionEndDate = this.$moment(this.repeatForm.repetitionEndDate).format('YYYY-MM-DD')
+            this.repeatForm.repetitionEndDate = this.$moment(
+              this.repeatForm.repetitionEndDate
+            ).format('YYYY-MM-DD')
             data = { ...data, ...this.repeatForm }
           }
         })
       }
       if (type === 'toNext') {
-        this.$refs.toNextForm.validate(validate => {
+        this.$refs.toNextForm.validate((validate) => {
           valid = validate
           if (valid) {
             const startTime = `${this.toNextForm.startDate} ${this.toNextForm.startTime}:00`
@@ -575,11 +617,16 @@ export default {
             confirmButtonText: '是',
             cancelButtonText: '否',
             type: 'success'
-          }).then(() => {
-            this.$router.push({ path: '/currentMeeting', query: { meetingId: data, type: 'edit' }})
-          }).catch(() => {
-            this.query()
           })
+            .then(() => {
+              this.$router.push({
+                path: '/currentMeeting',
+                query: { meetingId: data, type: 'edit' }
+              })
+            })
+            .catch(() => {
+              this.query()
+            })
         })
         .finally(() => {
           this.loading = false
@@ -852,6 +899,7 @@ export default {
             .minutes {
               display: flex;
               flex: 1;
+              cursor: pointer;
 
               > div {
                 flex: 1;
